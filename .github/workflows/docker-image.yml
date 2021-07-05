@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: 
+      - main
+      - 'features/**'
+  pull_request:
+    branches:
+      - main
+      - 'features/**'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      
+    - name: Docker Login
+      uses: docker/login-action@v1.10.0
+      with:
+        # Server address of Docker registry. If not set then will default to Docker Hub
+        #registry: # optional
+        # Username used to log against the Docker registry
+        username: msaldivar
+        # Password or personal access token used to log against the Docker registry
+        password: ${{ secrets.DOCKER_PASS }}
+        # Log out from the Docker registry at the end of a job
+        logout: true
+
